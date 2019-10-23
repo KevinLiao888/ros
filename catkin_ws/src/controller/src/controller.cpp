@@ -1,14 +1,16 @@
-﻿#include "ros/ros.h"
+#include "ros/ros.h"
 #include "std_msgs/String.h"
 #include <sstream>
 #include <aris.hpp>
-//#include "kaanh.h"
 #include <atomic>
 #include <string>
 #include <filesystem>
 #include "controller/interface.h"
+#include "controller/rob_param.h"
 #include "controller/pose.h"
 #include "json.hpp"
+
+
 using namespace aris::dynamic;
 
 auto&cs = aris::server::ControlServer::instance();
@@ -128,3 +130,4 @@ int main(int argc,char ** argv)
 	}
 	return 0;
 }
+

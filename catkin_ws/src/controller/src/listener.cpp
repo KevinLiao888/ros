@@ -1,11 +1,11 @@
-﻿#include "ros/ros.h"
+#include "ros/ros.h"
 #include "std_msgs/String.h"
 #include <sstream>
 #include "controller/rob_param.h"
 #include "controller/pose.h"
 #include "controller/interface.h"
 #include <cmath>
-
+#include <atomic>
 //void chatterCallBack(const robot_joy::pose::ConstPtr& msg)
 //the gear initialed;
 
@@ -14,8 +14,8 @@ int dynamixel_gear = 0;
 int robot_gear = 0;
 
 //power_on=false means joystick is defaultly disabled, mode =false means robot is defaultly on joint space
-bool power_on=false
-std::uint32_t mode = 0,
+bool power_on=false;
+std::uint32_t mode = 0;
 double threshold_down = 0.01;
 double threshold_up = 0.9;
 //coordinate: value1 means Local coordinate system,value0 means world coordinate system
@@ -44,7 +44,7 @@ public:
 };
 listener::listener()
 {
-	robot_sub = nlistener_.subscribe<sensor_msgs::Joy>("robot_joy_topic", 1, &listener::robotCallBack, this);
+	robot_sub = nlistener_.subscribe<controller::rob_param>("robot_joy_topic", 1, &listener::robotCallBack, this);
 }
 void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 {
@@ -91,17 +91,25 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 			mode++;
 			if (mode >= 3)
 			{
-				mode = 0
+				mode = 0;
 			}
 			if (mode == 0)
 			{
 				//舵机手柄控制模式下，舵机必须处于手动模式//
 				cmd_vec.push_back("dmode --mode=0");
+				std::cout<<"dmode=0"<<std::endl;
+			}
+			else if(mode == 1)
+			{
+				//机械臂guanjie，舵机处于自动模式//
+				cmd_vec.push_back("dmode --mode=1");
+				std::cout<<"robot joint"<<std::endl;
 			}
 			else
 			{
-				//机械臂手柄控制模式下，舵机处于自动模式//
+				//机械臂moduan，舵机处于自动模式//
 				cmd_vec.push_back("dmode --mode=1");
+				std::cout<<"robot terminal"<<std::endl;
 			}
 			//每次切换模式，速度档位清零//
 			dynamixel_gear = 0;
@@ -122,7 +130,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				dynamixel_gear -= 1;
 			}
 			dynamixel_gear = std::max(0, dynamixel_gear);
-			dynamixel_gear = std::min(10, dynamixel_gear);
+			dynamixel_gear = std::min(20, dynamixel_gear);
 
 			//使能//
 			if (msg->md_ds_button == 1 &&
@@ -607,7 +615,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 			msg->select_mode == 0 &&
 			msg->start == 0 &&
 			msg->gear == 0 &&
-			abs(msg->forward_back) < threshold)
+			abs(msg->forward_back) <= threshold_down)
 		{
 			cmd_vec.push_back("");
 			en_cmd.store(false);
@@ -645,7 +653,7 @@ int main(int argc,char ** argv)
 	ros::Rate loop_rate(20);
 
 	//service client//
-	ros::ServiceClient cmd_client = n.serviceClient<controller::interface>("getcmd");
+	ros::ServiceClient cmd_client = listener_node.nlistener_.serviceClient<controller::interface>("getcmd");
 
 	while (ros::ok())
   	{

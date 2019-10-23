@@ -228,20 +228,13 @@ link_directories(/usr/local/lib)
 #add_dependencies(talker beginner_tutorials_generate_messages_cpp)
 add_executable(controller src/controller.cpp)
 target_link_libraries(controller ${catkin_LIBRARIES} ${aris_LIBRARIES} atomic pthread stdc++fs)
-#add_dependencies(talker beginner_tutorials_generate_messages_cpp)
-
-
-# add_executable(move_Node src/move.cpp)
-# target_link_libraries(move_Node ${catkin_LIBRARIES} ${aris_LIBRARIES} atomic pthread stdc++fs)
+add_dependencies(controller controller_generate_messages_cpp)
 
 add_executable(listener src/listener.cpp)
 target_link_libraries(listener ${catkin_LIBRARIES} ${aris_LIBRARIES} atomic pthread stdc++fs)
-
-add_executable(dynamixel_Controller src/dynamixel_controller.cpp)
-target_link_libraries(dynamixel_Controller ${catkin_LIBRARIES} ${aris_LIBRARIES} atomic pthread stdc++fs dxl_x64_cpp)
+add_dependencies(listener controller_generate_messages_cpp)
 
 add_executable(RobotJoy src/RobotJoy.cpp)
 target_link_libraries(RobotJoy ${catkin_LIBRARIES} ${aris_LIBRARIES} atomic pthread stdc++fs dxl_x64_cpp)
+add_dependencies(RobotJoy controller_generate_messages_cpp)
 
-add_executable(steering_engine src/steering_engine.cpp)
-target_link_libraries(steering_engine ${catkin_LIBRARIES} ${aris_LIBRARIES} atomic pthread stdc++fs dxl_x64_cpp)
