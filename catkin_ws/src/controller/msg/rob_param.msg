@@ -10,11 +10,10 @@ int64 j3
 int64 j4
 int64 j5
 float64 j6
+float64 j7
 int64 select_mode
 int64 start
 float64 forward_back
 int64 gear
 int64 rs_button
 int64 md_ds_button
-float64 rc_en_button
-float64 start_stop

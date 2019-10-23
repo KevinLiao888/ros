@@ -1,10 +1,5 @@
 <launch>
- <!-- Turtlesim Node-->
-  <!-- node pkg="turtlesim" type="turtlesim_node" name="sim"/ -->
-
- <!-- joy node -->
-  <node respawn="true" pkg="joy"
-        type="joy_node" name="joy_node" >
+  <node respawn="true" pkg="joy" type="joy_node" name="joy_node" >
     <param name="dev" type="string" value="/dev/input/js0" />
     <param name="deadzone" value="0.12" />
   </node>
@@ -51,8 +46,6 @@
 
 
   <!-- node pkg="controller" type="dynamixel_Controller" name="dynamixel_Controller"/ -->
-
-
   <!-- param name="rz" value="1.0" type="double"/ -->
   <!-- param name="j6" value="1.0" type="double"/ -->
   <!-- node pkg="controller" type="listener" name="listener"/ -->
