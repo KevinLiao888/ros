@@ -65,7 +65,7 @@ int main(int argc, char** argv)
   
 	RobotJoy robot_joy;
   
-    ros::Rate loop_rate(20);
+    ros::Rate loop_rate(10);
     ros::spin();
     loop_rate.sleep();
 }

@@ -650,7 +650,7 @@ int main(int argc,char ** argv)
 	ros::init(argc, argv, "listener");
 	//subscriber//
 	listener listener_node;
-	ros::Rate loop_rate(20);
+	ros::Rate loop_rate(10);
 
 	//service client//
 	ros::ServiceClient cmd_client = listener_node.nlistener_.serviceClient<controller::interface>("getcmd");

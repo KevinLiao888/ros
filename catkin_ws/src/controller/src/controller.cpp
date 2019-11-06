@@ -68,9 +68,11 @@ int main(int argc,char ** argv)
 
 	//controll the model in Rviz,topic: model_control
 	ros::Publisher chatter_pub = n.advertise<std_msgs::String>("model_control", 1);
-	ros::Rate loop_rate(20);//default 20
+	ros::Rate loop_rate(10);//default 20
 	ros::ServiceServer service = n.advertiseService("getcmd", exector);
-
+	ros::spinOnce();
+	loop_rate.sleep();
+/*
 	// public data
 	std::mutex mut;
 	std::vector<double> data(49,0.0);
@@ -128,6 +130,7 @@ int main(int argc,char ** argv)
 		ros::spinOnce();
 		loop_rate.sleep();
 	}
+*/
 	return 0;
 }
 
