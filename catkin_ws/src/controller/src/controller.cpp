@@ -67,11 +67,11 @@ int main(int argc,char ** argv)
 	ros::NodeHandle n;
 
 	//controll the model in Rviz,topic: model_control
-	ros::Publisher chatter_pub = n.advertise<std_msgs::String>("model_control", 1);
-	ros::Rate loop_rate(10);//default 20
+	//ros::Publisher chatter_pub = n.advertise<std_msgs::String>("model_control", 1);
+	//ros::Rate loop_rate(10);//default 20
 	ros::ServiceServer service = n.advertiseService("getcmd", exector);
-	ros::spinOnce();
-	loop_rate.sleep();
+	ros::spin();
+
 /*
 	// public data
 	std::mutex mut;

@@ -1,4 +1,4 @@
-#include "ros/ros.h"
+﻿#include "ros/ros.h"
 #include "std_msgs/String.h"
 #include <sstream>
 #include "controller/rob_param.h"
@@ -97,19 +97,22 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 			{
 				//舵机手柄控制模式下，舵机必须处于手动模式//
 				cmd_vec.push_back("dmode --mode=0");
+				cmd_vec.push_back("xbox --mode=3");
 				std::cout<<"dmode=0"<<std::endl;
 			}
 			else if(mode == 1)
 			{
-				//机械臂guanjie，舵机处于自动模式//
+				//机械臂joint，舵机处于自动模式//
 				cmd_vec.push_back("dmode --mode=1");
-				std::cout<<"robot joint"<<std::endl;
+				cmd_vec.push_back("xbox --mode=1");
+				std::cout<<"robot joint control"<<std::endl;
 			}
 			else
 			{
-				//机械臂moduan，舵机处于自动模式//
+				//机械臂tcp，舵机处于自动模式//
 				cmd_vec.push_back("dmode --mode=1");
-				std::cout<<"robot terminal"<<std::endl;
+				cmd_vec.push_back("xbox --mode=2");
+				std::cout<<"robot terminal control"<<std::endl;
 			}
 			//每次切换模式，速度档位清零//
 			dynamixel_gear = 0;
@@ -289,8 +292,9 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 			}
 
 			va_percent = abs(msg->forward_back) * robot_gear *0.2 * 100;
-			if (msg->forward_back > 0) d = 1;
-			else d = -1;
+			if (msg->forward_back >= 0.5) d = 1;
+			else if (msg->forward_back < -0.5) d = -1;
+
 			if (msg->j1 == 1 && 
 				abs(msg->forward_back) > threshold_up &&
 				abs(msg->j7) <= threshold_down &&
@@ -650,7 +654,7 @@ int main(int argc,char ** argv)
 	ros::init(argc, argv, "listener");
 	//subscriber//
 	listener listener_node;
-	ros::Rate loop_rate(10);
+	ros::Rate loop_rate(50);
 
 	//service client//
 	ros::ServiceClient cmd_client = listener_node.nlistener_.serviceClient<controller::interface>("getcmd");
