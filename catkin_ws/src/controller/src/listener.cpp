@@ -16,7 +16,7 @@ int robot_gear = 0;
 //power_on=false means joystick is defaultly disabled, mode =false means robot is defaultly on joint space
 bool power_on=false;
 std::uint32_t mode = 0;
-double threshold_down = 0.01;
+double threshold_down = 0.05;
 double threshold_up = 0.9;
 //coordinate: value1 means Local coordinate system,value0 means world coordinate system
 int coordinate = 0;
@@ -145,6 +145,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->rx == 0 &&
 				msg->ry == 0 &&
 				msg->rz >= -0.9 &&
+				msg->movee >= -0.9 &&
 				msg->select_mode == 0 &&
 				msg->start == 0 &&
 				msg->gear == 0 &&
@@ -167,6 +168,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->rx == 0 &&
 				msg->ry == 0 &&
 				msg->rz >= -0.9 &&
+				msg->movee >= -0.9 &&
 				msg->select_mode == 0 &&
 				msg->start == 0 &&
 				msg->gear == 0 &&
@@ -187,6 +189,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->j4 == 0 &&
 				msg->j5 == 0 &&
 				msg->j6 >= -0.9 &&
+				msg->movee >= -0.9 &&
 				msg->select_mode == 0 &&
 				msg->start == 0 &&
 				msg->gear == 0
@@ -204,6 +207,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->j4 == 0 &&
 				msg->j5 == 0 &&
 				msg->j6 >= -0.9 &&
+				msg->movee >= -0.9 &&
 				msg->select_mode == 0 &&
 				msg->start == 0 &&
 				msg->gear == 0
@@ -221,12 +225,31 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->j4 == 0 &&
 				msg->j5 == 0 &&
 				msg->j6 >= -0.9 &&
+				msg->movee >= -0.9 &&
 				msg->select_mode == 0 &&
 				msg->start == 0 &&
 				msg->gear == 0
 				)
 			{
 				cmd_vec.push_back("dj3 --direction=" + std::to_string(d) + " --step=" + std::to_string(dynamixel_gear));
+			}
+			else if (msg->movee < -0.9 && &&
+				abs(msg->forward_back) <= threshold_down &&
+				abs(msg->j7) <= threshold_down &&
+				msg->rs_button == 0 &&
+				msg->md_ds_button == 0 &&
+				msg->j1 == 0 &&
+				msg->j2 == 0 &&
+				msg->j3 == 0 &&
+				msg->j4 == 0 &&
+				msg->j5 >= -0.9 &&
+				msg->j6 >= -0.9 &&
+				msg->select_mode == 0 &&
+				msg->start == 0 &&
+				msg->gear == 0
+				)
+			{
+				cmd_vec.push_back("mve");
 			}
 			else
 			{
@@ -259,6 +282,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->rx == 0 &&
 				msg->ry == 0 &&
 				msg->rz >= -0.9 &&
+				msg->movee >= -0.9 &&
 				msg->select_mode == 0 &&
 				msg->start == 0 &&
 				msg->gear == 0 &&
@@ -283,6 +307,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->rx == 0 &&
 				msg->ry == 0 &&
 				msg->rz >= -0.9 &&
+				msg->movee >= -0.9 &&
 				msg->select_mode == 0 &&
 				msg->start == 0 &&
 				msg->gear == 0 &&
@@ -305,6 +330,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->j4 == 0 &&
 				msg->j5 == 0 &&
 				msg->j6 >= -0.9 &&
+				msg->movee >= -0.9 &&
 				msg->select_mode == 0 &&
 				msg->start == 0 &&
 				msg->gear == 0
@@ -322,6 +348,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->j4 == 0 &&
 				msg->j5 == 0 &&
 				msg->j6 >= -0.9 &&
+				msg->movee >= -0.9 &&
 				msg->select_mode == 0 &&
 				msg->start == 0 &&
 				msg->gear == 0
@@ -339,6 +366,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->j4 == 0 &&
 				msg->j5 == 0 &&
 				msg->j6 >= -0.9 &&
+				msg->movee >= -0.9 &&
 				msg->select_mode == 0 &&
 				msg->start == 0 &&
 				msg->gear == 0
@@ -356,6 +384,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->j3 == 0 &&
 				msg->j5 == 0 &&
 				msg->j6 >= -0.9 &&
+				msg->movee >= -0.9 &&
 				msg->select_mode == 0 &&
 				msg->start == 0 &&
 				msg->gear == 0
@@ -373,6 +402,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->j3 == 0 &&
 				msg->j4 == 0 &&
 				msg->j6 >= -0.9 &&
+				msg->movee >= -0.9 &&
 				msg->select_mode == 0 &&
 				msg->start == 0 &&
 				msg->gear == 0
@@ -390,6 +420,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->j3 == 0 &&
 				msg->j4 == 0 &&
 				msg->j5 >= -0.9 &&
+				msg->movee >= -0.9 &&
 				msg->select_mode == 0 &&
 				msg->start == 0 &&
 				msg->gear == 0
@@ -407,12 +438,31 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->j4 == 0 &&
 				msg->j5 >= -0.9 &&
 				msg->j6 >= -0.9 &&
+				msg->movee >= -0.9 &&
 				msg->select_mode == 0 &&
 				msg->start == 0 &&
 				msg->gear == 0
 				)
 			{
 				cmd_vec.push_back("j7 --direction=" + std::to_string(d) + " --vel_percent=" + std::to_string(va_percent));
+			}
+			else if (msg->movee < -0.9 && &&
+				abs(msg->forward_back) <= threshold_down &&
+				abs(msg->j7) <= threshold_down &&
+				msg->rs_button == 0 &&
+				msg->md_ds_button == 0 &&
+				msg->j1 == 0 &&
+				msg->j2 == 0 &&
+				msg->j3 == 0 &&
+				msg->j4 == 0 &&
+				msg->j5 >= -0.9 &&
+				msg->j6 >= -0.9 &&
+				msg->select_mode == 0 &&
+				msg->start == 0 &&
+				msg->gear == 0
+				)
+			{
+				cmd_vec.push_back("mve");
 			}
 			else
 			{
@@ -445,6 +495,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->rx == 0 &&
 				msg->ry == 0 &&
 				msg->rz >= -0.9 &&
+				msg->movee >= -0.9 &&
 				msg->select_mode == 0 &&
 				msg->start == 0 &&
 				msg->gear == 0 &&
@@ -469,6 +520,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->rx == 0 &&
 				msg->ry == 0 &&
 				msg->rz >= -0.9 &&
+				msg->movee >= -0.9 &&
 				msg->select_mode == 0 &&
 				msg->start == 0 &&
 				msg->gear == 0 &&
@@ -495,6 +547,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->rx == 0 &&
 				msg->ry == 0 &&
 				msg->rz >= -0.9 &&
+				msg->movee >= -0.9 &&
 				msg->select_mode == 0 &&
 				msg->start == 0 &&
 				msg->gear == 0
@@ -512,6 +565,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->rx == 0 &&
 				msg->ry == 0 &&
 				msg->rz >= -0.9 &&
+				msg->movee >= -0.9 &&
 				msg->select_mode == 0 &&
 				msg->start == 0 &&
 				msg->gear == 0
@@ -529,6 +583,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->rx == 0 &&
 				msg->ry == 0 &&
 				msg->rz >= -0.9 &&
+				msg->movee >= -0.9 &&
 				msg->select_mode == 0 &&
 				msg->start == 0 &&
 				msg->gear == 0
@@ -546,6 +601,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->z == 0 &&
 				msg->ry == 0 &&
 				msg->rz >= -0.9 &&
+				msg->movee >= -0.9 &&
 				msg->select_mode == 0 &&
 				msg->start == 0 &&
 				msg->gear == 0
@@ -563,6 +619,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->z == 0 &&
 				msg->rx == 0 &&
 				msg->rz >= -0.9 &&
+				msg->movee >= -0.9 &&
 				msg->select_mode == 0 &&
 				msg->start == 0 &&
 				msg->gear == 0)
@@ -579,6 +636,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->z == 0 &&
 				msg->rx == 0 &&
 				msg->ry == 0 &&
+				msg->movee >= -0.9 &&
 				msg->select_mode == 0 &&
 				msg->start == 0 &&
 				msg->gear == 0)//the default value of msg.rz & msg.j6 is 1
@@ -595,11 +653,30 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->rx == 0 &&
 				msg->ry == 0 &&
 				msg->rz >= -0.9 &&
+				msg->movee >= -0.9 &&
 				msg->select_mode == 0 &&
 				msg->start == 0 &&
 				msg->gear == 0)//the default value of msg.rz & msg.j6 is 1
 			{
 				cmd_vec.push_back("j7 --direction=" + std::to_string(d) + " --vel_percent=" + std::to_string(va_percent));
+			}
+			else if (msg->movee < -0.9 && &&
+				abs(msg->forward_back) <= threshold_down &&
+				abs(msg->j7) <= threshold_down &&
+				msg->rs_button == 0 &&
+				msg->md_ds_button == 0 &&
+				msg->j1 == 0 &&
+				msg->j2 == 0 &&
+				msg->j3 == 0 &&
+				msg->j4 == 0 &&
+				msg->j5 >= -0.9 &&
+				msg->j6 >= -0.9 &&
+				msg->select_mode == 0 &&
+				msg->start == 0 &&
+				msg->gear == 0
+				)
+			{
+			cmd_vec.push_back("mve");
 			}
 			else
 			{
@@ -616,6 +693,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 			msg->rx == 0 &&
 			msg->ry == 0 &&
 			msg->rz >= -0.9 &&
+			msg->movee >= -0.9 &&
 			msg->select_mode == 0 &&
 			msg->start == 0 &&
 			msg->gear == 0 &&

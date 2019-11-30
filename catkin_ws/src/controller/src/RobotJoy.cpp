@@ -1,4 +1,4 @@
-#include <ros/ros.h>
+﻿#include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
 #include <sensor_msgs/Joy.h>
 #include <sstream>
@@ -25,7 +25,7 @@ RobotJoy::RobotJoy()
 	joy_robot_sub_ = nh_.subscribe<sensor_msgs::Joy>("joy", 50, &RobotJoy::joyrobotCallback, this);
 }
 
-int x_j1=2, y_j2 = 3, z_j3 =5 ,rx_j4 = 0,ry_j5 = 1,rz_j6 = 5,j7 = 4, forward_back=1,start=7,gear=7; 
+int x_j1=2, y_j2 = 3, z_j3 =5 ,rx_j4 = 0,ry_j5 = 1,rz_j6 = 5,j7 = 4, mve=2, forward_back=1,start=7,gear=7; 
 int select_mode=6;
 int rs_button = 4, md_ds_button = 6;
 
@@ -52,7 +52,7 @@ void RobotJoy::joyrobotCallback(const sensor_msgs::Joy::ConstPtr& joy)
     msg.gear = joy->axes[gear];
     msg.rs_button = joy->buttons[rs_button];
     msg.md_ds_button = joy->axes[md_ds_button];
-
+	msg.movee = joy->axes[mve];
     robot_pub_.publish(msg);
 }
 
