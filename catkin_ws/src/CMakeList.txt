@@ -1,5 +1,6 @@
 # toplevel CMakeLists.txt for a catkin workspace
 # catkin/cmake/toplevel.cmake
+# /opt/ros/kinetic/share/catkin/cmake/toplevel.cmake
 
 cmake_minimum_required(VERSION 3.12)
 

@@ -174,7 +174,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->gear == 0 &&
 				abs(msg->forward_back) < threshold_down)
 			{
-				cmd_vec.push_back("dmvaj --pos=0.0");
+				cmd_vec.push_back("dhome");
 			}
 
 			if (msg->forward_back > 0) d = 1;
@@ -233,7 +233,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 			{
 				cmd_vec.push_back("dj3 --direction=" + std::to_string(d) + " --step=" + std::to_string(dynamixel_gear));
 			}
-			else if (msg->movee < -0.9 && &&
+			else if (msg->movee < -0.9 &&
 				abs(msg->forward_back) <= threshold_down &&
 				abs(msg->j7) <= threshold_down &&
 				msg->rs_button == 0 &&
@@ -313,7 +313,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->gear == 0 &&
 				abs(msg->forward_back) < threshold_down)
 			{
-				cmd_vec.push_back("rs --vel=0.02");
+				cmd_vec.push_back("mve0");
 			}
 
 			va_percent = abs(msg->forward_back) * robot_gear *0.2 * 100;
@@ -446,7 +446,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 			{
 				cmd_vec.push_back("j7 --direction=" + std::to_string(d) + " --vel_percent=" + std::to_string(va_percent));
 			}
-			else if (msg->movee < -0.9 && &&
+			else if (msg->movee < -0.9 &&
 				abs(msg->forward_back) <= threshold_down &&
 				abs(msg->j7) <= threshold_down &&
 				msg->rs_button == 0 &&
@@ -526,7 +526,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->gear == 0 &&
 				abs(msg->forward_back) < threshold_down)
 			{
-				cmd_vec.push_back("rs --vel=0.02");
+				cmd_vec.push_back("mve0");
 			}
 
 			va_percent = abs(msg->forward_back) * robot_gear *0.2 * 100;
@@ -660,7 +660,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 			{
 				cmd_vec.push_back("j7 --direction=" + std::to_string(d) + " --vel_percent=" + std::to_string(va_percent));
 			}
-			else if (msg->movee < -0.9 && &&
+			else if (msg->movee < -0.9 &&
 				abs(msg->forward_back) <= threshold_down &&
 				abs(msg->j7) <= threshold_down &&
 				msg->rs_button == 0 &&
@@ -732,7 +732,7 @@ int main(int argc,char ** argv)
 	ros::init(argc, argv, "listener");
 	//subscriber//
 	listener listener_node;
-	ros::Rate loop_rate(50);
+	ros::Rate loop_rate(20);
 
 	//service client//
 	ros::ServiceClient cmd_client = listener_node.nlistener_.serviceClient<controller::interface>("getcmd");

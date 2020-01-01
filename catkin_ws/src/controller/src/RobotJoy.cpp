@@ -22,7 +22,7 @@ RobotJoy::RobotJoy()
 	robot_pub_ = nh_.advertise<controller::rob_param>("robot_joy_topic", 1);
 
 	// subscribe to the joystick topic //
-	joy_robot_sub_ = nh_.subscribe<sensor_msgs::Joy>("joy", 50, &RobotJoy::joyrobotCallback, this);
+	joy_robot_sub_ = nh_.subscribe<sensor_msgs::Joy>("joy", 1, &RobotJoy::joyrobotCallback, this);
 }
 
 int x_j1=2, y_j2 = 3, z_j3 =5 ,rx_j4 = 0,ry_j5 = 1,rz_j6 = 5,j7 = 4, mve=2, forward_back=1,start=7,gear=7; 
