@@ -10,7 +10,7 @@
 //the gear initialed;
 
 //dynamixel_gear:舵机调速器，robot_gear:机器人调速器//
-int dynamixel_gear = 0;
+double dynamixel_gear = 0.0;
 int robot_gear = 0;
 
 //power_on=false means joystick is defaultly disabled, mode =false means robot is defaultly on joint space
@@ -126,14 +126,14 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 			// 舵机加减档 //
 			if (msg->gear == 1)
 			{
-				dynamixel_gear += 1;
+				dynamixel_gear += 1.0;
 			}
 			else if (msg->gear == -1)
 			{
-				dynamixel_gear -= 1;
+				dynamixel_gear -= 1.0;
 			}
-			dynamixel_gear = std::max(0, dynamixel_gear);
-			dynamixel_gear = std::min(20, dynamixel_gear);
+			dynamixel_gear = std::max(0.0, dynamixel_gear);
+			dynamixel_gear = std::min(5.0, dynamixel_gear);
 
 			//使能//
 			if (msg->md_ds_button == 1)
@@ -161,7 +161,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				msg->gear == 0 &&
 				abs(msg->forward_back) < threshold_down)
 			{
-				cmd_vec.push_back("dhome");
+				cmd_vec.push_back("tohome");
 			}
 
 			if (msg->forward_back > threshold_up) d = 1;
