@@ -1,4 +1,4 @@
-#include "ros/ros.h"
+﻿#include "ros/ros.h"
 #include "std_msgs/String.h"
 #include <sstream>
 #include <aris.hpp>
@@ -65,72 +65,9 @@ int main(int argc,char ** argv)
 
 	ros::init(argc, argv, "controller");
 	ros::NodeHandle n;
-
-	//controll the model in Rviz,topic: model_control
-	//ros::Publisher chatter_pub = n.advertise<std_msgs::String>("model_control", 1);
-	//ros::Rate loop_rate(10);//default 20
 	ros::ServiceServer service = n.advertiseService("getcmd", exector);
 	ros::spin();
 
-/*
-	// public data
-	std::mutex mut;
-	std::vector<double> data(49,0.0);
-	int status = 0;
-
-	client.setOnReceivedMsg([&](aris::core::Socket *sock, aris::core::Msg &msg) ->int
-	{
-		auto j = nlohmann::json::parse(msg.toString());// 接收到的返回值	
-		
-		try
-		{
-			std::vector<double> vec = j["part_pq"];
-			std::unique_lock<std::mutex> lck(mut);
-			status = 2;
-			data = vec;
-		}
-		catch(std::exception &e)
-		{
-			std::cout << "data format error in msg" << std::endl;
-		}
-		return 0;
-	});
-
-	while (ros::ok())
-	{
-		{	
-			std::unique_lock<std::mutex> lck(mut);
-
-			if(status == 0)
-			{
-				client.sendMsg(aris::core::Msg("get"));
-				status = 1;
-			}
-			else if(status == 2)
-			{
-				std_msgs::String msg;
-				std::stringstream ss;
-				ss<<"{";
-				for(int i=0;i<49;i++)
-				{
-					ss<<data[i];
-					if(i!=48)
-					{
-						ss<<",";
-					}
-				}
-				ss<<"}";
-
-				msg.data = ss.str();
-				chatter_pub.publish(msg);
-				status = 0;
-			}
-			else{}
-		}
-		ros::spinOnce();
-		loop_rate.sleep();
-	}
-*/
 	return 0;
 }
 

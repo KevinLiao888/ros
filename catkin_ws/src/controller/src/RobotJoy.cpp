@@ -44,11 +44,11 @@ void RobotJoy::joyrobotCallback(const sensor_msgs::Joy::ConstPtr& joy)
     msg.j3 = joy->buttons[z_j3];
     msg.j4 = joy->buttons[rx_j4];
     msg.j5 = joy->buttons[ry_j5];
-    msg.j6 = joy->axes[rz_j6];
-	msg.j7 = joy->axes[j7];
+    msg.j6 = joy->axes[rz_j6];//按下的数值为-1
+	msg.j7 = joy->axes[j7];//向上按下，数值为1
     msg.select_mode = joy->buttons[select_mode];
     msg.start = joy->buttons[start];
-    msg.forward_back = joy->axes[forward_back];
+    msg.forward_back = joy->axes[forward_back];//1前进；-1后退
     msg.gear = joy->axes[gear];
     msg.rs_button = joy->buttons[rs_button];
     msg.md_ds_button = joy->axes[md_ds_button];
@@ -62,10 +62,15 @@ int main(int argc, char** argv)
 
 	// initialize our ROS node, create a robot_joy, and spin our node until Ctrl-C is pressed
 	ros::init(argc, argv, "RobotJoy");
-  
 	RobotJoy robot_joy;
-  
-    ros::spin();
+	ros::Rate loop_rate(20);
+
+	while (ros::ok())
+	{
+		ros::spinOnce();
+		loop_rate.sleep();
+	}
+    //ros::spin();
 }
 
 

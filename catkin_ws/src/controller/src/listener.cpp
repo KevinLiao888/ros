@@ -16,7 +16,7 @@ int robot_gear = 0;
 //power_on=false means joystick is defaultly disabled, mode =false means robot is defaultly on joint space
 bool power_on=false;
 std::uint32_t mode = 0;
-double threshold_down = 0.05;
+double threshold_down = 0.5;
 double threshold_up = 0.9;
 //coordinate: value1 means Local coordinate system,value0 means world coordinate system
 int coordinate = 0;
@@ -29,8 +29,6 @@ int d=1;
 std::vector<std::string> cmd_vec;
 
 //std::string cmd;
-int init=0, init1 =1;
-double init_d=0.00,init_d1=1.00;
 std::atomic_bool en_cmd=false;
 
 class listener
@@ -60,19 +58,21 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 		if (msg->rx == 1) num_b += 1;
 		if (msg->ry == 1) num_b += 1;
 		if (msg->rz <= -0.9) num_b += 1;
-		if (msg->md_ds_button == 1) num_b += 1;
 		if (abs(msg->j7) > threshold_up) num_b += 1;
-		if (msg->rs_button == 1) num_b += 1;
 		if (msg->select_mode == 1) num_b += 1;
 		if (msg->start == 1) num_b += 1;
-		if (msg->gear == 1) num_b += 1;
 		if (abs(msg->forward_back) > threshold_up) num_b += 1;
+		if (msg->gear == 1) num_b += 1;
+		if (msg->rs_button == 1) num_b += 1;
+		if (msg->md_ds_button == 1) num_b += 1;
+		if (msg->movee <= -0.9) num_b += 1;
 		if (num_b > 2)
 		{
 			std::cout << "listener: Please don't hold down more than two buttons at the same time." << std::endl;
 			std::cout << "The robot is in safety mode.The gear is zeroed.Please increase gear." << std::endl;
-			dynamixel_gear = 0;
-			robot_gear = 0;
+			//dynamixel_gear = 0;
+			//robot_gear = 0;
+			return;
 		}
 	}
 
@@ -136,20 +136,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 			dynamixel_gear = std::min(20, dynamixel_gear);
 
 			//使能//
-			if (msg->md_ds_button == 1 &&
-				msg->rs_button == 0 &&
-				abs(msg->j7) <= threshold_down &&
-				msg->x == 0 &&
-				msg->y == 0 &&
-				msg->z == 0 &&
-				msg->rx == 0 &&
-				msg->ry == 0 &&
-				msg->rz >= -0.9 &&
-				msg->movee >= -0.9 &&
-				msg->select_mode == 0 &&
-				msg->start == 0 &&
-				msg->gear == 0 &&
-				abs(msg->forward_back) < threshold_down)
+			if (msg->md_ds_button == 1)
 			{
 				cmd_vec.push_back("denable");
 			}
@@ -177,8 +164,8 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 				cmd_vec.push_back("dhome");
 			}
 
-			if (msg->forward_back > 0) d = 1;
-			else d = -1;
+			if (msg->forward_back > threshold_up) d = 1;
+			else if (msg->forward_back < (-threshold_up)) d = 1;
 			if (msg->j1 == 1 && 
 				abs(msg->forward_back) > threshold_up &&
 				abs(msg->j7) <= threshold_down &&
@@ -260,7 +247,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 		// 机械臂关节控制 //
 		if (mode == 1)
 		{
-			std::cout << "listener: joint control" << std::endl;
+			std::cout << "joint control" << std::endl;
 			// 手柄加减档 //
 			if (msg->gear == 1)
 			{
@@ -273,20 +260,7 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 			robot_gear = std::max(0, robot_gear);
 			robot_gear = std::min(5, robot_gear);
 			//使能//
-			if (msg->md_ds_button == 1 &&
-				msg->rs_button == 0 &&
-				abs(msg->j7) <= threshold_down &&
-				msg->x == 0 &&
-				msg->y == 0 &&
-				msg->z == 0 &&
-				msg->rx == 0 &&
-				msg->ry == 0 &&
-				msg->rz >= -0.9 &&
-				msg->movee >= -0.9 &&
-				msg->select_mode == 0 &&
-				msg->start == 0 &&
-				msg->gear == 0 &&
-				abs(msg->forward_back) < threshold_down)
+			if (msg->md_ds_button == 1)
 			{
 				cmd_vec.push_back("md");
 				cmd_vec.push_back("en");
@@ -317,8 +291,8 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 			}
 
 			va_percent = abs(msg->forward_back) * robot_gear *0.2 * 100;
-			if (msg->forward_back >= 0.5) d = 1;
-			else if (msg->forward_back < -0.5) d = -1;
+			if (msg->forward_back >= threshold_up) d = 1;
+			else if (msg->forward_back < -threshold_up) d = -1;
 
 			if (msg->j1 == 1 && 
 				abs(msg->forward_back) > threshold_up &&
@@ -466,14 +440,14 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 			}
 			else
 			{
-				std::cout << "listener: You can manipulate the direction key to control the robot.";
+			std::cout << "no cmd in joint control mode" << std::endl;
 			}
 		}
 
 		// 机械臂tcp控制 //
 		if (mode == 2)
 		{
-			std::cout << "listener: tcp control" << std::endl;
+			std::cout << "tcp control" << std::endl;
 			// 手柄加减档 //
 			if (msg->gear == 1)
 			{
@@ -680,34 +654,14 @@ void listener::robotCallBack(const controller::rob_param::ConstPtr& msg)
 			}
 			else
 			{
-				std::cout << "listener: You can manipulate the direction key to control the robot.";
+				std::cout << "no cmd in tcp control mode" <<std::endl;
 			}
-		}
-
-		// no cmd //
-		if (msg->md_ds_button == 0 &&
-			msg->rs_button == 0 &&
-			msg->x == 0 &&
-			msg->y == 0 &&
-			msg->z == 0 &&
-			msg->rx == 0 &&
-			msg->ry == 0 &&
-			msg->rz >= -0.9 &&
-			msg->movee >= -0.9 &&
-			msg->select_mode == 0 &&
-			msg->start == 0 &&
-			msg->gear == 0 &&
-			abs(msg->forward_back) <= threshold_down)
-		{
-			cmd_vec.push_back("");
-			en_cmd.store(false);
-			return;
 		}
 		en_cmd.store(true);
 	}
 	else
 	{
-		std::cout << "listener: joystick is disabled, press start button to enable";
+		std::cout << "xbox is disabled, please press start button to enable" <<std::endl;
 		en_cmd.store(false);
 	}
 }
@@ -721,7 +675,6 @@ void call_service(ros::ServiceClient & cmd_client,std::string cmd_in)
 	}
 	else
 	{
-		//ROS_ERROR("Failed to call service controller");
 		return;
 	}
 	return;
@@ -732,7 +685,8 @@ int main(int argc,char ** argv)
 	ros::init(argc, argv, "listener");
 	//subscriber//
 	listener listener_node;
-	ros::Rate loop_rate(20);
+	//ros::Rate loop_rate(20);
+	ros::Rate loop_rate(40);
 
 	//service client//
 	ros::ServiceClient cmd_client = listener_node.nlistener_.serviceClient<controller::interface>("getcmd");
